@@ -28,11 +28,20 @@ export const registerService = async ({
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const [user] = await UserModel.create([{ username, email }], {
+        const lastLogin = new Date();
+        const isOnline = true;
+
+        const [user] = await UserModel.create([{ username, email, isOnline }], {
             session,
         });
         await AuthModel.create(
-            [{ userId: user._id, password: hashedPassword }],
+            [
+                {
+                    userId: user._id,
+                    password: hashedPassword,
+                    lastLogin,
+                },
+            ],
             { session }
         );
 
