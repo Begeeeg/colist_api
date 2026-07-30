@@ -1,9 +1,12 @@
 import UserModel from "../user/user.model";
 import bcrypt from "bcryptjs";
-import { RegisterData } from "./types/auth.types";
+import { LogInData, RegisterData } from "./types/auth.types";
 import AuthModel from "./auth.model";
 import mongoose from "mongoose";
-import { ConflictError } from "../../../../common/errorStatusCode";
+import {
+    BadRequestError,
+    ConflictError,
+} from "../../../../common/errorStatusCode";
 
 export const registerService = async ({
     username,
@@ -51,6 +54,8 @@ export const registerService = async ({
             id: user._id,
             username: user.username,
             email: user.email,
+            isOnline: user.isOnline,
+            lastLogin,
         };
     } catch (error) {
         await session.abortTransaction();
@@ -58,4 +63,42 @@ export const registerService = async ({
     } finally {
         session.endSession();
     }
+};
+
+export const logInService = async ({ email, password }: LogInData) => {
+    const user = await UserModel.findOne({
+        email,
+    });
+
+    if (!user) {
+        throw new BadRequestError("Invalid email or password");
+    }
+
+    const auth = await AuthModel.findOne({
+        userId: user._id,
+    }).select("+password");
+
+    if (!auth) {
+        throw new BadRequestError("Invalid email or password");
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, auth.password);
+
+    if (!isPasswordValid) {
+        throw new BadRequestError("Invalid email or password");
+    }
+
+    const lastLogin = new Date();
+    const isOnline = true;
+
+    await UserModel.updateOne({ _id: user._id }, { isOnline });
+    await AuthModel.updateOne({ userId: user._id }, { lastLogin });
+
+    return {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        isOnline: user.isOnline,
+        lastLogin,
+    };
 };
