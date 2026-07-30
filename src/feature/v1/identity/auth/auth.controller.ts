@@ -70,3 +70,47 @@ export const logInController = async (
         });
     }
 };
+
+export const logOutController = async (
+    req: Request,
+    res: Response
+): Promise<void> => {
+    try {
+        const userId = req.user;
+
+        let user;
+        if (userId) {
+            user = await authService.logOutService(userId);
+        }
+
+        res.cookie("jwt", "", {
+            maxAge: 0,
+            httpOnly: true,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production",
+        });
+
+        res.status(200).json({
+            message: "User logged out successfully",
+            data: user,
+        });
+    } catch (error) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).json({
+                message: error.message,
+            });
+            return;
+        }
+
+        if (error instanceof Error) {
+            res.status(500).json({
+                message: error.message,
+            });
+            return;
+        }
+
+        res.status(500).json({
+            message: "Internal server error",
+        });
+    }
+};

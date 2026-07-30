@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import {
     BadRequestError,
     ConflictError,
+    NotFoundError,
 } from "../../../../common/errorStatusCode";
 
 export const registerService = async ({
@@ -100,5 +101,31 @@ export const logInService = async ({ email, password }: LogInData) => {
         email: user.email,
         isOnline: user.isOnline,
         lastLogin,
+    };
+};
+
+export const logOutService = async (userId: string) => {
+    const user = await UserModel.findByIdAndUpdate(
+        userId,
+        { isOnline: false },
+        { returnDocument: "after" }
+    );
+
+    const auth = await AuthModel.findOneAndUpdate(
+        { userId },
+        { lastLogout: new Date() },
+        { returnDocument: "after" }
+    );
+
+    if (!user) {
+        throw new NotFoundError("User not found");
+    }
+
+    return {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        isOnline: user.isOnline,
+        lastLogout: auth?.lastLogout,
     };
 };
