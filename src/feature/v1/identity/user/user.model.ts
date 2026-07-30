@@ -22,7 +22,7 @@ const UserSchema = new Schema<IUser>(
             type: String,
             default: null,
         },
-        isActive: {
+        isOnline: {
             type: Boolean,
             default: false,
         },

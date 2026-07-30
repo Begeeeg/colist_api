@@ -4,7 +4,7 @@ export interface IUser {
     username: string;
     email: string;
     avatarUrl?: string;
-    isActive: boolean;
+    isOnline: boolean;
     role: userRole;
     createdAt: Date;
     updatedAt: Date;
