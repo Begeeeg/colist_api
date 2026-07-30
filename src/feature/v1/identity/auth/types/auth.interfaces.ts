@@ -3,7 +3,8 @@ import { Types } from "mongoose";
 export interface IAuth {
     userId: Types.ObjectId;
     password: string;
-    lastLogin?: Date | null;
+    lastLogin: Date;
+    lastLogout: Date;
     createdAt: Date;
     updatedAt: Date;
 }

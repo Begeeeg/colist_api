@@ -16,7 +16,9 @@ const AuthSchema = new Schema<IAuth>(
         },
         lastLogin: {
             type: Date,
-            default: null,
+        },
+        lastLogout: {
+            type: Date,
         },
     },
     {
