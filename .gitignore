@@ -6,3 +6,4 @@ logs
 \*.log
 
 /src/feature/vx
+/documentation.md
