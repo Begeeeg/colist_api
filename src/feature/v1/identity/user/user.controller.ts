@@ -80,3 +80,44 @@ export const updateUsernameController = async (
         });
     }
 };
+
+export const updatePasswordController = async (
+    req: Request,
+    res: Response
+): Promise<void> => {
+    try {
+        if (!req.user) {
+            res.status(401).json({ message: "Unauthorized" });
+            return;
+        }
+
+        const result = await userService.updatePasswordService({
+            id: req.user._id.toString(),
+            currentPassword: req.body.currentPassword,
+            newPassword: req.body.newPassword,
+        });
+
+        res.status(200).json({
+            message: "Password updated successfully",
+            data: result,
+        });
+    } catch (error) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).json({
+                message: error.message,
+            });
+            return;
+        }
+
+        if (error instanceof Error) {
+            res.status(500).json({
+                message: error.message,
+            });
+            return;
+        }
+
+        res.status(500).json({
+            message: "Internal server error",
+        });
+    }
+};

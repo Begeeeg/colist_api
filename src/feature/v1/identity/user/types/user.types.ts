@@ -7,3 +7,9 @@ export interface UpdateUserData {
     username: string;
     password: string;
 }
+
+export interface UpdatePasswordData {
+    id: string;
+    currentPassword: string;
+    newPassword: string;
+}

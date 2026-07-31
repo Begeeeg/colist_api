@@ -4,7 +4,11 @@ import {
     NotFoundError,
 } from "../../../../common/errorStatusCode";
 import AuthModel from "../auth/auth.model";
-import { GetUserData, UpdateUserData } from "./types/user.types";
+import {
+    GetUserData,
+    UpdatePasswordData,
+    UpdateUserData,
+} from "./types/user.types";
 import UserModel from "./user.model";
 import bcrypt from "bcryptjs";
 
@@ -63,5 +67,48 @@ export const updateUsernameService = async ({
     return {
         id: user._id,
         username: user.username,
+    };
+};
+
+export const updatePasswordService = async ({
+    id,
+    currentPassword,
+    newPassword,
+}: UpdatePasswordData) => {
+    const user = await UserModel.findById(id);
+    if (!user) {
+        throw new NotFoundError("User not found");
+    }
+
+    const auth = await AuthModel.findOne({ userId: user._id }).select(
+        "+password"
+    );
+    if (!auth) {
+        throw new NotFoundError("Auth record not found");
+    }
+
+    const isCurrentPasswordValid = await bcrypt.compare(
+        currentPassword,
+        auth.password
+    );
+    if (!isCurrentPasswordValid) {
+        throw new BadRequestError("Current password is incorrect");
+    }
+
+    const isSameAsOld = await bcrypt.compare(newPassword, auth.password);
+    if (isSameAsOld) {
+        throw new BadRequestError(
+            "New password must be different from your current password"
+        );
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    auth.password = hashedPassword;
+    await auth.save();
+
+    return {
+        id: user._id,
+        message: "Password updated successfully",
     };
 };
