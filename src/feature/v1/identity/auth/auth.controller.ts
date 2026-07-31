@@ -76,12 +76,8 @@ export const logOutController = async (
     res: Response
 ): Promise<void> => {
     try {
-        const userId = req.user;
-
-        let user;
-        if (userId) {
-            user = await authService.logOutService(userId);
-        }
+        const userId = req.user?._id?.toString();
+        const user = await authService.logOutService(userId);
 
         res.cookie("jwt", "", {
             maxAge: 0,
