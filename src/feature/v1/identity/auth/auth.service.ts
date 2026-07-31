@@ -55,7 +55,7 @@ export const registerService = async ({
             id: user._id,
             username: user.username,
             email: user.email,
-            isOnline: user.isOnline,
+            isOnline,
             lastLogin,
         };
     } catch (error) {
@@ -99,23 +99,18 @@ export const logInService = async ({ email, password }: LogInData) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        isOnline: user.isOnline,
+        isOnline,
         lastLogin,
     };
 };
 
 export const logOutService = async (userId: string) => {
-    const user = await UserModel.findByIdAndUpdate(
-        userId,
-        { isOnline: false },
-        { returnDocument: "after" }
-    );
+    const lastLogout = new Date();
+    const isOnline = false;
 
-    const auth = await AuthModel.findOneAndUpdate(
-        { userId },
-        { lastLogout: new Date() },
-        { returnDocument: "after" }
-    );
+    const user = await UserModel.findByIdAndUpdate(userId, { isOnline });
+
+    const auth = await AuthModel.findOneAndUpdate({ userId }, { lastLogout });
 
     if (!user) {
         throw new NotFoundError("User not found");
@@ -125,7 +120,7 @@ export const logOutService = async (userId: string) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        isOnline: user.isOnline,
-        lastLogout: auth?.lastLogout,
+        isOnline,
+        lastLogout,
     };
 };
