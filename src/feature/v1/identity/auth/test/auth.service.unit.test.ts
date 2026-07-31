@@ -38,6 +38,7 @@ describe("registerService (unit)", () => {
                 _id: "user-id-123",
                 username: input.username,
                 email: input.email,
+                isOnline: true,
             },
         ]);
         (AuthModel.create as jest.Mock).mockResolvedValue([{}]);
@@ -48,6 +49,8 @@ describe("registerService (unit)", () => {
             id: "user-id-123",
             username: input.username,
             email: input.email,
+            isOnline: true,
+            lastLogin: expect.any(Date),
         });
         expect(mockSession.commitTransaction).toHaveBeenCalled();
         expect(mockSession.abortTransaction).not.toHaveBeenCalled();
