@@ -5,7 +5,7 @@ import {
     updatePasswordController,
     updateUsernameController,
 } from "./user.controller";
-import { UpdateUsernameSchema } from "./dto/update.data.dto";
+import { UpdateUsernameSchema } from "./dto/updateUsername.data.dto";
 import { validate } from "../../../../common/validatorDataDto";
 import { UpdatePasswordSchema } from "./dto/updatePassword.data.dto";
 
@@ -13,13 +13,13 @@ const router = express.Router();
 
 router.get("/me", protectRoutes, getUserController);
 router.patch(
-    "/:id",
+    "/username",
     protectRoutes,
     validate(UpdateUsernameSchema),
     updateUsernameController
 );
 router.patch(
-    "/password/:id",
+    "/password",
     protectRoutes,
     validate(UpdatePasswordSchema),
     updatePasswordController
