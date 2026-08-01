@@ -2,7 +2,7 @@ export interface GetUserData {
     id: string;
 }
 
-export interface UpdateUserData {
+export interface UpdateUsernameData {
     id: string;
     username: string;
     password: string;

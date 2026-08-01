@@ -7,7 +7,7 @@ import AuthModel from "../auth/auth.model";
 import {
     GetUserData,
     UpdatePasswordData,
-    UpdateUserData,
+    UpdateUsernameData,
 } from "./types/user.types";
 import UserModel from "./user.model";
 import bcrypt from "bcryptjs";
@@ -30,7 +30,7 @@ export const updateUsernameService = async ({
     id,
     username,
     password,
-}: UpdateUserData) => {
+}: UpdateUsernameData) => {
     const user = await UserModel.findById(id);
     if (!user) {
         throw new NotFoundError("User not found");
