@@ -13,3 +13,7 @@ export interface UpdatePasswordData {
     currentPassword: string;
     newPassword: string;
 }
+
+export interface SearchUsersData {
+    query: string;
+}

@@ -121,3 +121,46 @@ export const updatePasswordController = async (
         });
     }
 };
+
+export const searchUsersController = async (
+    req: Request,
+    res: Response
+): Promise<void> => {
+    try {
+        const query = req.query.username;
+
+        console.log("req.query:", req.query);
+        console.log("req.body:", req.body);
+        console.log("req.params:", req.params);
+
+        if (typeof query !== "string") {
+            res.status(400).json({ message: "Invalid search query" });
+            return;
+        }
+
+        const users = await userService.searchUsersService({ query });
+
+        res.status(200).json({
+            message: "Users retrieved successfully",
+            data: users,
+        });
+    } catch (error) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).json({
+                message: error.message,
+            });
+            return;
+        }
+
+        if (error instanceof Error) {
+            res.status(500).json({
+                message: error.message,
+            });
+            return;
+        }
+
+        res.status(500).json({
+            message: "Internal server error",
+        });
+    }
+};

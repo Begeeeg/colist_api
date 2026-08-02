@@ -6,6 +6,7 @@ import {
 import AuthModel from "../auth/auth.model";
 import {
     GetUserData,
+    SearchUsersData,
     UpdatePasswordData,
     UpdateUsernameData,
 } from "./types/user.types";
@@ -111,4 +112,23 @@ export const updatePasswordService = async ({
         id: user._id,
         message: "Password updated successfully",
     };
+};
+
+export const searchUsersService = async ({ query }: SearchUsersData) => {
+    if (!query || query.trim().length === 0) {
+        throw new BadRequestError("Search query is required");
+    }
+
+    const users = await UserModel.find({
+        username: { $regex: query.trim(), $options: "i" },
+    })
+        .select("username email isOnline")
+        .limit(20);
+
+    return users.map((user) => ({
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        isOnline: user.isOnline,
+    }));
 };
