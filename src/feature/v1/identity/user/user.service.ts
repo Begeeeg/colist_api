@@ -112,7 +112,7 @@ export const updatePasswordService = async ({
 
     return {
         id: user._id,
-        message: "Password updated successfully",
+        username: user.username,
     };
 };
 
@@ -165,7 +165,7 @@ export const deleteUserService = async ({ id, password }: DeleteUserData) => {
 
         return {
             id: user._id,
-            message: "Account deleted successfully",
+            username: user.username,
         };
     } catch (error) {
         await session.abortTransaction();

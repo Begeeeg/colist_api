@@ -129,10 +129,6 @@ export const searchUsersController = async (
     try {
         const query = req.query.username;
 
-        console.log("req.query:", req.query);
-        console.log("req.body:", req.body);
-        console.log("req.params:", req.params);
-
         if (typeof query !== "string") {
             res.status(400).json({ message: "Invalid search query" });
             return;
