@@ -1,6 +1,7 @@
 import express from "express";
 import { protectRoutes } from "../../../../common/protectRoutes";
 import {
+    deleteUserController,
     getUserController,
     searchUsersController,
     updatePasswordController,
@@ -9,6 +10,7 @@ import {
 import { UpdateUsernameSchema } from "./dto/updateUsername.data.dto";
 import { validate } from "../../../../common/validatorDataDto";
 import { UpdatePasswordSchema } from "./dto/updatePassword.data.dto";
+import { DeleteUserSchema } from "./dto/deleteUser.data.dto";
 
 const router = express.Router();
 
@@ -26,5 +28,11 @@ router.patch(
     updatePasswordController
 );
 router.get("/search", protectRoutes, searchUsersController);
+router.delete(
+    "/me",
+    protectRoutes,
+    validate(DeleteUserSchema),
+    deleteUserController
+);
 
 export default router;

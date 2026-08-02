@@ -17,3 +17,8 @@ export interface UpdatePasswordData {
 export interface SearchUsersData {
     query: string;
 }
+
+export interface DeleteUserData {
+    id: string;
+    password: string;
+}

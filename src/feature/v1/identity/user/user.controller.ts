@@ -164,3 +164,50 @@ export const searchUsersController = async (
         });
     }
 };
+
+export const deleteUserController = async (
+    req: Request,
+    res: Response
+): Promise<void> => {
+    try {
+        if (!req.user) {
+            res.status(401).json({ message: "Unauthorized" });
+            return;
+        }
+
+        const result = await userService.deleteUserService({
+            id: req.user._id.toString(),
+            password: req.body.password,
+        });
+
+        res.cookie("jwt", "", {
+            maxAge: 0,
+            httpOnly: true,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production",
+        });
+
+        res.status(200).json({
+            message: "Account deleted successfully",
+            data: result,
+        });
+    } catch (error) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).json({
+                message: error.message,
+            });
+            return;
+        }
+
+        if (error instanceof Error) {
+            res.status(500).json({
+                message: error.message,
+            });
+            return;
+        }
+
+        res.status(500).json({
+            message: "Internal server error",
+        });
+    }
+};
